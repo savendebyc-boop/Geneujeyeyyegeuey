@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Озвучка Сценариев</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141937;
+            --bg-card: #1a1f3a;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ca3bc;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .voice-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        select {
+            padding: 14px 18px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Sora', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 32px;
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        button:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .progress-container {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .audio-player {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .audio-player.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background: var(--bg-secondary);
+        }
+
+        .info-box {
+            margin-top: 32px;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .voice-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Озвучка Сценариев</h1>
+        <p class="subtitle">Преобразуйте текст в профессиональную аудиозапись</p>
+
+        <div class="input-group">
+            <label for="script">Ваш сценарий</label>
+            <textarea 
+                id="script" 
+                placeholder="Вставьте текст вашего сценария сюда...
+                
+Например:
+Добро пожаловать в мир, где технологии встречаются с творчеством. Сегодня мы расскажем вам удивительную историю о том, как искусственный интеллект меняет нашу жизнь..."></textarea>
+        </div>
+
+        <div class="voice-selector">
+            <div class="input-group">
+                <label for="voiceSelect">Выбор голоса</label>
+                <select id="voiceSelect">
+                    <option value="">Загрузка голосов...</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="rate">Скорость речи</label>
+                <select id="rate">
+                    <option value="0.75">Медленно (0.75x)</option>
+                    <option value="0.9">Чуть медленнее (0.9x)</option>
+                    <option value="1" selected>Нормально (1x)</option>
+                    <option value="1.1">Чуть быстрее (1.1x)</option>
+                    <option value="1.25">Быстро (1.25x)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="generateBtn" class="btn-primary">
+                Сгенерировать озвучку
+            </button>
+            <button id="downloadBtn" class="btn-secondary" disabled>
+                Скачать MP3
+            </button>
+        </div>
+
+        <div id="progressContainer" class="progress-container">
+            <div class="status">
+                <div class="spinner"></div>
+                <span id="statusText">Генерация аудио...</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="audioPlayer" class="audio-player">
+            <audio id="audio" controls></audio>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 Совет:</strong> Для достижения наилучшего качества выберите подходящий мужской голос из списка. 
+            Рекомендуются голоса типа "Google русский" или системные голоса вашей ОС. 
+            Для очень длинных текстов процесс может занять некоторое время.
+        </div>
+    </div>
+
+    <script>
+        let voices = [];
+        const voiceSelect = document.getElementById('voiceSelect');
+        const scriptTextarea = document.getElementById('script');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const statusText = document.getElementById('statusText');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audio = document.getElementById('audio');
+        const rateSelect = document.getElementById('rate');
+
+        let audioBlob = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+
+        // Загружаем доступные голоса
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            
+            const russianVoices = voices.filter(voice => 
+                voice.lang.startsWith('ru')
+            );
+
+            voiceSelect.innerHTML = '';
+
+            if (russianVoices.length === 0) {
+                voiceSelect.innerHTML = '<option>Русские голоса не найдены. Используется голос по умолчанию.</option>';
+                return;
+            }
+
+            russianVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                
+                // Выбираем первый мужской голос
+                if ((voice.name.toLowerCase().includes('male') || 
+                     voice.name.toLowerCase().includes('мужской') ||
+                     voice.name.toLowerCase().includes('yuri') ||
+                     voice.name.toLowerCase().includes('google')) && !voiceSelect.querySelector('option[selected]')) {
+                    option.selected = true;
+                }
+                
+                voiceSelect.appendChild(option);
+            });
+
+            // Если не нашли мужской, выбираем первый
+            if (!voiceSelect.querySelector('option[selected]') && voiceSelect.options.length > 0) {
+                voiceSelect.options[0].selected = true;
+            }
+        }
+
+        loadVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        // Разбиваем текст на части
+        function splitIntoChunks(text, maxLength = 200) {
+            const sentences = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
+            const chunks = [];
+            let currentChunk = '';
+
+            sentences.forEach(sentence => {
+                if ((currentChunk + sentence).length > maxLength && currentChunk) {
+                    chunks.push(currentChunk.trim());
+                    currentChunk = sentence;
+                } else {
+                    currentChunk += ' ' + sentence;
+                }
+            });
+
+            if (currentChunk.trim()) {
+                chunks.push(currentChunk.trim());
+            }
+
+            return chunks;
+        }
+
+        // Основная функция генерации
+        generateBtn.addEventListener('click', async () => {
+            const text = scriptTextarea.value.trim();
+            
+            if (!text) {
+                alert('Пожалуйста, введите текст сценария');
+                return;
+            }
+
+            const selectedVoice = voices.find(v => v.name === voiceSelect.value);
+
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+            progressContainer.classList.add('active');
+            audioPlayer.classList.remove('active');
+            progressFill.style.width = '0%';
+            statusText.textContent = 'Подготовка к записи...';
+            recordedChunks = [];
+
+            try {
+                // Создаем AudioContext для записи
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const dest = audioContext.createMediaStreamDestination();
+                
+                // Создаем MediaRecorder
+                mediaRecorder = new MediaRecorder(dest.stream, {
+                    mimeType: 'audio/webm;codecs=opus'
+                });
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+
+                // Начинаем запись
+                mediaRecorder.start();
+
+                const chunks = splitIntoChunks(text);
+                statusText.textContent = `Озвучивание текста...`;
+
+                // Озвучиваем все части последовательно
+                for (let i = 0; i < chunks.length; i++) {
+                    statusText.textContent = `Озвучивание ${i + 1} из ${chunks.length} частей...`;
+                    progressFill.style.width = `${((i + 1) / chunks.length) * 100}%`;
+                    
+                    await speakText(chunks[i], selectedVoice);
+                    
+                    // Небольшая пауза между частями
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+
+                // Останавливаем запись
+                statusText.textContent = 'Завершение записи...';
+                
+                await new Promise((resolve) => {
+                    mediaRecorder.onstop = () => {
+                        // Создаем blob из записанных данных
+                        audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+                        
+                        // Создаем URL для воспроизведения
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audio.src = audioUrl;
+
+                        progressContainer.classList.remove('active');
+                        audioPlayer.classList.add('active');
+                        downloadBtn.disabled = false;
+                        
+                        resolve();
+                    };
+                    
+                    mediaRecorder.stop();
+                });
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при генерации аудио.\n\n' + 
+                      'Попробуйте:\n' +
+                      '1. Использовать браузер Chrome\n' +
+                      '2. Сократить текст\n' +
+                      '3. Выбрать другой голос');
+                progressContainer.classList.remove('active');
+            } finally {
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Функция озвучивания одного фрагмента
+        function speakText(text, voice) {
+            return new Promise((resolve, reject) => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                if (voice) {
+                    utterance.voice = voice;
+                }
+                
+                utterance.lang = 'ru-RU';
+                utterance.rate = parseFloat(rateSelect.value);
+                utterance.pitch = 0.95;
+                utterance.volume = 1;
+
+                utterance.onend = () => resolve();
+                utterance.onerror = (e) => {
+                    console.error('Speech error:', e);
+                    resolve(); // Продолжаем даже при ошибке
+                };
+
+                speechSynthesis.speak(utterance);
+            });
+        }
+
+        // Скачивание файла
+        downloadBtn.addEventListener('click', () => {
+            if (!audioBlob) return;
+
+            const url = URL.createObjectURL(audioBlob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `озвучка_${Date.now()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        });
+    </script>
+</body>
+</html>
