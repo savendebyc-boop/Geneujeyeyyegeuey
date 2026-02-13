@@ -406,7 +406,7 @@
                 Сгенерировать озвучку
             </button>
             <button id="downloadBtn" class="btn-secondary" disabled>
-                Скачать MP3
+                Скачать аудио
             </button>
         </div>
 
@@ -437,7 +437,8 @@
             <strong>Рекомендации:</strong><br>
             • Оптимальная скорость: "Нормально"<br>
             • Для лучшего качества используйте тексты до 5000 символов<br>
-            • Текст автоматически разбивается на части
+            • Текст автоматически разбивается на части<br>
+            • Файл сохраняется в формате WAV (высокое качество, можно конвертировать в MP3)
         </div>
 
         <div class="warning-box">
@@ -648,12 +649,9 @@
                 statusText.textContent = 'Объединение аудио...';
                 progressFill.style.width = '95%';
 
-                // Объединяем все части
-                if (audioChunks.length === 1) {
-                    audioBlob = new Blob([audioChunks[0]], { type: 'audio/mpeg' });
-                } else {
-                    audioBlob = mergeAudioChunks(audioChunks);
-                }
+                // Правильно объединяем аудио через Web Audio API
+                const finalAudio = await mergeAudioProperly(audioChunks);
+                audioBlob = finalAudio;
 
                 const audioUrl = URL.createObjectURL(audioBlob);
                 audio.src = audioUrl;
@@ -669,7 +667,26 @@
 
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('Произошла ошибка при генерации аудио.\n\nВозможные причины:\n• Сервис временно недоступен\n• Попробуйте сократить текст\n• Попробуйте позже');
+                let errorMessage = 'Произошла ошибка при генерации аудио.\n\n';
+                
+                if (error.message.includes('декодировать')) {
+                    errorMessage += 'Проблема с обработкой аудио данных.\n';
+                    errorMessage += 'Попробуйте:\n';
+                    errorMessage += '• Использовать более короткий текст\n';
+                    errorMessage += '• Попробовать позже\n';
+                    errorMessage += '• Проверить интернет-соединение';
+                } else if (error.message.includes('недоступен')) {
+                    errorMessage += 'TTS сервисы временно недоступны.\n';
+                    errorMessage += 'Попробуйте через несколько минут.';
+                } else {
+                    errorMessage += 'Возможные причины:\n';
+                    errorMessage += '• Сервис временно недоступен\n';
+                    errorMessage += '• Слишком длинный текст\n';
+                    errorMessage += '• Проблемы с интернет-соединением\n\n';
+                    errorMessage += 'Попробуйте сократить текст или повторить попытку позже.';
+                }
+                
+                alert(errorMessage);
                 progressContainer.classList.remove('active');
             } finally {
                 generateBtn.disabled = false;
@@ -700,18 +717,129 @@
             return chunks;
         }
 
-        // Объединение аудио файлов
-        function mergeAudioChunks(chunks) {
-            const totalLength = chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
-            const merged = new Uint8Array(totalLength);
+        // Правильное объединение аудио файлов через Web Audio API
+        async function mergeAudioProperly(audioChunks) {
+            if (audioChunks.length === 0) {
+                throw new Error('Нет аудио данных для объединения');
+            }
+
+            if (audioChunks.length === 1) {
+                // Если только один чанк, всё равно декодируем и конвертируем в WAV для единообразия
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                try {
+                    const buffer = await audioContext.decodeAudioData(audioChunks[0].slice(0));
+                    return audioBufferToWav(buffer);
+                } catch (e) {
+                    console.error('Error decoding single chunk:', e);
+                    // Если не удалось декодировать, возвращаем как есть
+                    return new Blob([audioChunks[0]], { type: 'audio/mpeg' });
+                }
+            }
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const buffers = [];
+
+            // Декодируем каждый чанк в AudioBuffer
+            for (let i = 0; i < audioChunks.length; i++) {
+                try {
+                    const buffer = await audioContext.decodeAudioData(audioChunks[i].slice(0));
+                    buffers.push(buffer);
+                } catch (e) {
+                    console.error(`Ошибка декодирования части ${i + 1}:`, e);
+                    // Пропускаем битые чанки, но продолжаем
+                }
+            }
+
+            if (buffers.length === 0) {
+                throw new Error('Не удалось декодировать ни один аудио фрагмент. Попробуйте другой текст или метод.');
+            }
+
+            if (buffers.length === 1) {
+                // Конвертируем единственный буфер в WAV
+                return audioBufferToWav(buffers[0]);
+            }
+
+            // Вычисляем общую длину
+            const totalLength = buffers.reduce((sum, buffer) => sum + buffer.length, 0);
+            const numberOfChannels = buffers[0].numberOfChannels;
+            const sampleRate = buffers[0].sampleRate;
+
+            // Создаём объединённый буфер
+            const mergedBuffer = audioContext.createBuffer(
+                numberOfChannels,
+                totalLength,
+                sampleRate
+            );
+
+            // Копируем данные из всех буферов
             let offset = 0;
+            for (let i = 0; i < buffers.length; i++) {
+                for (let channel = 0; channel < numberOfChannels; channel++) {
+                    mergedBuffer.getChannelData(channel).set(
+                        buffers[i].getChannelData(channel),
+                        offset
+                    );
+                }
+                offset += buffers[i].length;
+            }
 
-            chunks.forEach(chunk => {
-                merged.set(new Uint8Array(chunk), offset);
-                offset += chunk.byteLength;
-            });
+            // Конвертируем в WAV
+            return audioBufferToWav(mergedBuffer);
+        }
 
-            return new Blob([merged], { type: 'audio/mpeg' });
+        // Конвертация AudioBuffer в WAV Blob
+        function audioBufferToWav(buffer) {
+            const numberOfChannels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const format = 1; // PCM
+            const bitDepth = 16;
+
+            const bytesPerSample = bitDepth / 8;
+            const blockAlign = numberOfChannels * bytesPerSample;
+
+            const data = [];
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numberOfChannels; channel++) {
+                    const sample = buffer.getChannelData(channel)[i];
+                    const int16 = Math.max(-1, Math.min(1, sample));
+                    data.push(int16 < 0 ? int16 * 0x8000 : int16 * 0x7FFF);
+                }
+            }
+
+            const dataLength = data.length * bytesPerSample;
+            const bufferLength = 44 + dataLength;
+            const arrayBuffer = new ArrayBuffer(bufferLength);
+            const view = new DataView(arrayBuffer);
+
+            // WAV заголовок
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataLength, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); // fmt chunk size
+            view.setUint16(20, format, true);
+            view.setUint16(22, numberOfChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * blockAlign, true); // byte rate
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitDepth, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataLength, true);
+
+            // PCM данные
+            let offset = 44;
+            for (let i = 0; i < data.length; i++) {
+                view.setInt16(offset, data[i], true);
+                offset += 2;
+            }
+
+            return new Blob([arrayBuffer], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
         }
 
         // Скачивание файла
@@ -722,7 +850,11 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = `озвучка_${Date.now()}.mp3`;
+            
+            // Определяем расширение по типу blob
+            const extension = audioBlob.type.includes('wav') ? 'wav' : 'mp3';
+            a.download = `озвучка_${Date.now()}.${extension}`;
+            
             document.body.appendChild(a);
             a.click();
 
