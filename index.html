@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Озвучка Сценариев</title>
+    <title>Озвучка Сценариев - Бесплатный Естественный Голос</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -100,6 +100,17 @@
             font-size: 1.1rem;
             margin-bottom: 40px;
             font-weight: 300;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 24px;
         }
 
         .input-group {
@@ -209,13 +220,9 @@
             box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 24px rgba(0, 212, 255, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
         }
 
         .btn-secondary {
@@ -224,7 +231,7 @@
             border: 2px solid var(--border-color);
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             border-color: var(--accent-primary);
             background: rgba(0, 212, 255, 0.1);
         }
@@ -232,7 +239,6 @@
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none !important;
         }
 
         .progress-container {
@@ -311,10 +317,6 @@
             outline: none;
         }
 
-        audio::-webkit-media-controls-panel {
-            background: var(--bg-secondary);
-        }
-
         .info-box {
             margin-top: 32px;
             padding: 20px;
@@ -328,6 +330,16 @@
 
         .info-box strong {
             color: var(--accent-primary);
+        }
+
+        .warning-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
@@ -356,14 +368,15 @@
 <body>
     <div class="container">
         <h1>🎙️ Озвучка Сценариев</h1>
-        <p class="subtitle">Преобразуйте текст в профессиональную аудиозапись</p>
+        <p class="subtitle">Бесплатный естественный голос AI</p>
+        <span class="badge">✨ 100% Бесплатно • Без API ключей</span>
 
         <div class="input-group">
             <label for="script">Ваш сценарий</label>
             <textarea 
                 id="script" 
                 placeholder="Вставьте текст вашего сценария сюда...
-                
+
 Например:
 Добро пожаловать в мир, где технологии встречаются с творчеством. Сегодня мы расскажем вам удивительную историю о том, как искусственный интеллект меняет нашу жизнь..."></textarea>
         </div>
@@ -372,17 +385,18 @@
             <div class="input-group">
                 <label for="voiceSelect">Выбор голоса</label>
                 <select id="voiceSelect">
-                    <option value="">Загрузка голосов...</option>
+                    <option value="male">Мужской голос</option>
+                    <option value="female">Женский голос</option>
                 </select>
             </div>
             <div class="input-group">
                 <label for="rate">Скорость речи</label>
                 <select id="rate">
-                    <option value="0.75">Медленно (0.75x)</option>
-                    <option value="0.9">Чуть медленнее (0.9x)</option>
-                    <option value="1" selected>Нормально (1x)</option>
-                    <option value="1.1">Чуть быстрее (1.1x)</option>
-                    <option value="1.25">Быстро (1.25x)</option>
+                    <option value="-25%">Медленно</option>
+                    <option value="-10%">Чуть медленнее</option>
+                    <option value="+0%" selected>Нормально</option>
+                    <option value="+10%">Чуть быстрее</option>
+                    <option value="+25%">Быстро</option>
                 </select>
             </div>
         </div>
@@ -411,16 +425,31 @@
         </div>
 
         <div class="info-box">
-            <strong>💡 Совет:</strong> Для достижения наилучшего качества выберите подходящий мужской голос из списка. 
-            Рекомендуются голоса типа "Google русский" или системные голоса вашей ОС. 
-            Для очень длинных текстов процесс может занять некоторое время.
+            <strong>✨ Полностью бесплатно!</strong><br><br>
+            
+            Используется комбинация бесплатных TTS сервисов:<br>
+            • <strong>VoiceRSS</strong> - основной метод (хорошее качество)<br>
+            • <strong>Google TTS</strong> - резервный метод<br>
+            • <strong>Web Speech API</strong> - локальный синтез<br><br>
+            
+            Система автоматически выбирает лучший доступный метод.<br><br>
+            
+            <strong>Рекомендации:</strong><br>
+            • Оптимальная скорость: "Нормально"<br>
+            • Для лучшего качества используйте тексты до 5000 символов<br>
+            • Текст автоматически разбивается на части
+        </div>
+
+        <div class="warning-box">
+            ⚠️ Сервис использует бесплатные публичные API. При большой нагрузке возможны ограничения. 
+            Если один метод недоступен, система автоматически переключится на резервный.
         </div>
     </div>
 
     <script>
-        let voices = [];
-        const voiceSelect = document.getElementById('voiceSelect');
         const scriptTextarea = document.getElementById('script');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rateSelect = document.getElementById('rate');
         const generateBtn = document.getElementById('generateBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const progressContainer = document.getElementById('progressContainer');
@@ -428,62 +457,235 @@
         const statusText = document.getElementById('statusText');
         const audioPlayer = document.getElementById('audioPlayer');
         const audio = document.getElementById('audio');
-        const rateSelect = document.getElementById('rate');
 
         let audioBlob = null;
-        let mediaRecorder = null;
-        let recordedChunks = [];
 
-        // Загружаем доступные голоса
-        function loadVoices() {
-            voices = speechSynthesis.getVoices();
+        // Функция для генерации TTS через VoiceRSS (бесплатный API)
+        async function generateVoiceRSS(text, voice, rate) {
+            // Бесплатный демо ключ (ограниченный)
+            const apiKey = ''; // Оставляем пустым, так как бесплатный ключ может быть заблокирован
             
-            const russianVoices = voices.filter(voice => 
-                voice.lang.startsWith('ru')
-            );
+            const rateMap = {
+                '-25%': '-3',
+                '-10%': '-1',
+                '+0%': '0',
+                '+10%': '1',
+                '+25%': '3'
+            };
+            
+            const speed = rateMap[rate] || '0';
+            
+            // VoiceRSS API
+            const url = `https://api.voicerss.org/?key=demo&hl=ru-ru&c=MP3&f=44khz_16bit_mono&src=${encodeURIComponent(text)}&r=${speed}`;
+            
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error('VoiceRSS API недоступен');
+            }
 
-            voiceSelect.innerHTML = '';
+            return await response.arrayBuffer();
+        }
 
-            if (russianVoices.length === 0) {
-                voiceSelect.innerHTML = '<option>Русские голоса не найдены. Используется голос по умолчанию.</option>';
+        // Альтернативная функция через gTTS (Google TTS)
+        async function generateGoogleTTS(text) {
+            // Используем публичный Google Translate TTS
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ru&client=tw-ob&q=${encodeURIComponent(text)}`;
+            
+            const response = await fetch(url, {
+                mode: 'cors',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0',
+                    'Referer': 'https://translate.google.com/'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Google TTS недоступен');
+            }
+
+            return await response.arrayBuffer();
+        }
+        
+        // Резервная функция через Web Speech API с записью
+        async function generateWebSpeech(text, voiceGender, rate) {
+            return new Promise((resolve, reject) => {
+                // Создаем аудио контекст
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const dest = audioContext.createMediaStreamDestination();
+                const mediaRecorder = new MediaRecorder(dest.stream, {
+                    mimeType: 'audio/webm;codecs=opus'
+                });
+                const chunks = [];
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) chunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    const arrayBuffer = await blob.arrayBuffer();
+                    resolve(arrayBuffer);
+                };
+
+                // Создаем utterance
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voices = speechSynthesis.getVoices();
+                
+                // Выбираем русский голос нужного пола
+                let selectedVoice = voices.find(v => 
+                    v.lang.startsWith('ru') && 
+                    (voiceGender === 'male' ? 
+                        (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('мужской') || v.name.toLowerCase().includes('yuri') || v.name.toLowerCase().includes('dmitry')) :
+                        (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('женский') || v.name.toLowerCase().includes('tatyana') || v.name.toLowerCase().includes('svetlana'))
+                    )
+                );
+                
+                // Если не нашли нужный пол, берём любой русский
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(v => v.lang.startsWith('ru'));
+                }
+                
+                if (selectedVoice) utterance.voice = selectedVoice;
+                utterance.lang = 'ru-RU';
+                
+                const rateMap = {
+                    '-25%': 0.75,
+                    '-10%': 0.9,
+                    '+0%': 1.0,
+                    '+10%': 1.1,
+                    '+25%': 1.25
+                };
+                utterance.rate = rateMap[rate] || 1.0;
+                utterance.pitch = voiceGender === 'male' ? 0.9 : 1.1;
+
+                mediaRecorder.start();
+
+                utterance.onend = () => {
+                    setTimeout(() => mediaRecorder.stop(), 200);
+                };
+
+                utterance.onerror = (e) => {
+                    mediaRecorder.stop();
+                    reject(e);
+                };
+
+                speechSynthesis.cancel();
+                speechSynthesis.speak(utterance);
+            });
+        }
+        
+        // Инициализируем голоса для Web Speech API
+        if (speechSynthesis) {
+            speechSynthesis.getVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+            }
+        }
+
+        // Основная функция генерации
+        generateBtn.addEventListener('click', async () => {
+            const text = scriptTextarea.value.trim();
+            const voice = voiceSelect.value;
+            const rate = rateSelect.value;
+
+            if (!text) {
+                alert('Пожалуйста, введите текст сценария');
                 return;
             }
 
-            russianVoices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = voice.name;
-                option.textContent = `${voice.name} (${voice.lang})`;
-                
-                // Выбираем первый мужской голос
-                if ((voice.name.toLowerCase().includes('male') || 
-                     voice.name.toLowerCase().includes('мужской') ||
-                     voice.name.toLowerCase().includes('yuri') ||
-                     voice.name.toLowerCase().includes('google')) && !voiceSelect.querySelector('option[selected]')) {
-                    option.selected = true;
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+            progressContainer.classList.add('active');
+            audioPlayer.classList.remove('active');
+            progressFill.style.width = '0%';
+            statusText.textContent = 'Подготовка...';
+
+            try {
+                // Разбиваем текст на части
+                const chunks = splitTextIntoChunks(text, 300);
+                const audioChunks = [];
+
+                for (let i = 0; i < chunks.length; i++) {
+                    statusText.textContent = `Генерация части ${i + 1} из ${chunks.length}...`;
+                    progressFill.style.width = `${((i + 1) / chunks.length) * 90}%`;
+
+                    let audioData = null;
+                    let method = 'unknown';
+
+                    // Пробуем методы по порядку
+                    try {
+                        // Метод 1: VoiceRSS (бесплатный, хорошее качество)
+                        audioData = await generateVoiceRSS(chunks[i], voice, rate);
+                        method = 'VoiceRSS';
+                    } catch (e1) {
+                        console.warn('VoiceRSS failed:', e1);
+                        try {
+                            // Метод 2: Google TTS (бесплатный, среднее качество)
+                            audioData = await generateGoogleTTS(chunks[i]);
+                            method = 'Google TTS';
+                        } catch (e2) {
+                            console.warn('Google TTS failed:', e2);
+                            // Метод 3: Web Speech API (локальный, качество зависит от системы)
+                            audioData = await generateWebSpeech(chunks[i], voice, rate);
+                            method = 'Web Speech';
+                        }
+                    }
+
+                    if (audioData) {
+                        audioChunks.push(audioData);
+                        console.log(`Chunk ${i + 1} generated using ${method}`);
+                    } else {
+                        throw new Error('All TTS methods failed');
+                    }
+
+                    // Задержка между запросами для избежания rate limiting
+                    if (i < chunks.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
                 }
+
+                statusText.textContent = 'Объединение аудио...';
+                progressFill.style.width = '95%';
+
+                // Объединяем все части
+                if (audioChunks.length === 1) {
+                    audioBlob = new Blob([audioChunks[0]], { type: 'audio/mpeg' });
+                } else {
+                    audioBlob = mergeAudioChunks(audioChunks);
+                }
+
+                const audioUrl = URL.createObjectURL(audioBlob);
+                audio.src = audioUrl;
+
+                progressFill.style.width = '100%';
+                statusText.textContent = 'Готово!';
                 
-                voiceSelect.appendChild(option);
-            });
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                    audioPlayer.classList.add('active');
+                    downloadBtn.disabled = false;
+                }, 500);
 
-            // Если не нашли мужской, выбираем первый
-            if (!voiceSelect.querySelector('option[selected]') && voiceSelect.options.length > 0) {
-                voiceSelect.options[0].selected = true;
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при генерации аудио.\n\nВозможные причины:\n• Сервис временно недоступен\n• Попробуйте сократить текст\n• Попробуйте позже');
+                progressContainer.classList.remove('active');
+            } finally {
+                generateBtn.disabled = false;
             }
-        }
+        });
 
-        loadVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = loadVoices;
-        }
+        // Разбивка текста на части
+        function splitTextIntoChunks(text, maxSize) {
+            if (text.length <= maxSize) return [text];
 
-        // Разбиваем текст на части
-        function splitIntoChunks(text, maxLength = 200) {
             const sentences = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
             const chunks = [];
             let currentChunk = '';
 
             sentences.forEach(sentence => {
-                if ((currentChunk + sentence).length > maxLength && currentChunk) {
+                if ((currentChunk + sentence).length > maxSize && currentChunk) {
                     chunks.push(currentChunk.trim());
                     currentChunk = sentence;
                 } else {
@@ -498,115 +700,18 @@
             return chunks;
         }
 
-        // Основная функция генерации
-        generateBtn.addEventListener('click', async () => {
-            const text = scriptTextarea.value.trim();
-            
-            if (!text) {
-                alert('Пожалуйста, введите текст сценария');
-                return;
-            }
+        // Объединение аудио файлов
+        function mergeAudioChunks(chunks) {
+            const totalLength = chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
+            const merged = new Uint8Array(totalLength);
+            let offset = 0;
 
-            const selectedVoice = voices.find(v => v.name === voiceSelect.value);
-
-            generateBtn.disabled = true;
-            downloadBtn.disabled = true;
-            progressContainer.classList.add('active');
-            audioPlayer.classList.remove('active');
-            progressFill.style.width = '0%';
-            statusText.textContent = 'Подготовка к записи...';
-            recordedChunks = [];
-
-            try {
-                // Создаем AudioContext для записи
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const dest = audioContext.createMediaStreamDestination();
-                
-                // Создаем MediaRecorder
-                mediaRecorder = new MediaRecorder(dest.stream, {
-                    mimeType: 'audio/webm;codecs=opus'
-                });
-
-                mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) {
-                        recordedChunks.push(e.data);
-                    }
-                };
-
-                // Начинаем запись
-                mediaRecorder.start();
-
-                const chunks = splitIntoChunks(text);
-                statusText.textContent = `Озвучивание текста...`;
-
-                // Озвучиваем все части последовательно
-                for (let i = 0; i < chunks.length; i++) {
-                    statusText.textContent = `Озвучивание ${i + 1} из ${chunks.length} частей...`;
-                    progressFill.style.width = `${((i + 1) / chunks.length) * 100}%`;
-                    
-                    await speakText(chunks[i], selectedVoice);
-                    
-                    // Небольшая пауза между частями
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                }
-
-                // Останавливаем запись
-                statusText.textContent = 'Завершение записи...';
-                
-                await new Promise((resolve) => {
-                    mediaRecorder.onstop = () => {
-                        // Создаем blob из записанных данных
-                        audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
-                        
-                        // Создаем URL для воспроизведения
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        audio.src = audioUrl;
-
-                        progressContainer.classList.remove('active');
-                        audioPlayer.classList.add('active');
-                        downloadBtn.disabled = false;
-                        
-                        resolve();
-                    };
-                    
-                    mediaRecorder.stop();
-                });
-
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при генерации аудио.\n\n' + 
-                      'Попробуйте:\n' +
-                      '1. Использовать браузер Chrome\n' +
-                      '2. Сократить текст\n' +
-                      '3. Выбрать другой голос');
-                progressContainer.classList.remove('active');
-            } finally {
-                generateBtn.disabled = false;
-            }
-        });
-
-        // Функция озвучивания одного фрагмента
-        function speakText(text, voice) {
-            return new Promise((resolve, reject) => {
-                const utterance = new SpeechSynthesisUtterance(text);
-                
-                if (voice) {
-                    utterance.voice = voice;
-                }
-                
-                utterance.lang = 'ru-RU';
-                utterance.rate = parseFloat(rateSelect.value);
-                utterance.pitch = 0.95;
-                utterance.volume = 1;
-
-                utterance.onend = () => resolve();
-                utterance.onerror = (e) => {
-                    console.error('Speech error:', e);
-                    resolve(); // Продолжаем даже при ошибке
-                };
-
-                speechSynthesis.speak(utterance);
+            chunks.forEach(chunk => {
+                merged.set(new Uint8Array(chunk), offset);
+                offset += chunk.byteLength;
             });
+
+            return new Blob([merged], { type: 'audio/mpeg' });
         }
 
         // Скачивание файла
@@ -617,10 +722,10 @@
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = `озвучка_${Date.now()}.webm`;
+            a.download = `озвучка_${Date.now()}.mp3`;
             document.body.appendChild(a);
             a.click();
-            
+
             setTimeout(() => {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
